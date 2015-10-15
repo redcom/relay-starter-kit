@@ -4,6 +4,10 @@ import Relay from 'react-relay';
 
 export default class Messages extends React.Component {
 
+    click(e) {
+        e.target.parentNode.remove();
+    }
+
   render() {
     let widgets = this.props.viewer.widgets;
     return (
@@ -12,7 +16,7 @@ export default class Messages extends React.Component {
             <p key={edge.node.id}>{edge.node.name} (ID: {edge.node.id})
 
                 <span className="time">Time</span>
-                <span className="delete">X</span>
+                <span className="delete" onClick={this.click.bind(this)}>X</span>
             </p>
           )}
         </div>
