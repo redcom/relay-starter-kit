@@ -116,9 +116,9 @@ var queryType = new GraphQLObjectType({
     // Add your own root fields here
     viewer: {
       type: userType,
-      resolve: () => getViewer(),
-    },
-  }),
+      resolve: () => getViewer()
+    }
+  })
 });
 
 /**

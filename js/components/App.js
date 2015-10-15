@@ -1,16 +1,17 @@
 import React from 'react';
 import Relay from 'react-relay';
 
+import InputChat from './InputChat';
+import Messages from './Messages';
+
 class App extends React.Component {
   render() {
+    let viewer = this.props.viewer;
     return (
       <div>
-        <h1>Widget list</h1>
-        <ul>
-          {this.props.viewer.widgets.edges.map(edge =>
-            <li key={edge.node.id}>{edge.node.name} (ID: {edge.node.id})</li>
-          )}
-        </ul>
+        <h1> Chat list</h1>
+        <Messages viewer={viewer} />
+        <InputChat />
       </div>
     );
   }
