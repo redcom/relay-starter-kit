@@ -44,7 +44,7 @@
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "User",
+                "name": "Message",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -94,7 +94,7 @@
           "possibleTypes": [
             {
               "kind": "OBJECT",
-              "name": "User",
+              "name": "Message",
               "ofType": null
             },
             {
@@ -106,7 +106,7 @@
         },
         {
           "kind": "OBJECT",
-          "name": "User",
+          "name": "Message",
           "description": "A person who uses our app",
           "fields": [
             {
@@ -391,12 +391,24 @@
               "deprecationReason": null
             },
             {
-              "name": "name",
-              "description": "The name of the widget",
+              "name": "content",
+              "description": "The content of the message",
               "args": [],
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "timestamp",
+              "description": "The timestamp of the message",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               },
               "isDeprecated": false,

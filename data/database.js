@@ -8,16 +8,19 @@
  */
 
 // Model types
-class User extends Object {}
+class Message extends Object {}
 class Widget extends Object {}
 
 // Mock data
-var viewer = new User();
+var viewer = new Message();
 viewer.id = '1';
-viewer.name = 'Anonymous';
-var widgets = ['What\'s-it', 'Who\'s-it', 'How\'s-it'].map((name, i) => {
+viewer.content = 'Anonymous';
+viewer.timestamp = Date.now();
+
+var widgets = ['What', 'Who', 'How'].map((content, i) => {
   var widget = new Widget();
-  widget.name = name;
+widget.content = content;
+widget.timestamp = Date.now();
   widget.id = `${i}`;
   return widget;
 });
@@ -28,6 +31,6 @@ module.exports = {
   getViewer: () => viewer,
   getWidget: (id) => widgets.find(w => w.id === id),
   getWidgets: () => widgets,
-  User,
+  Message,
   Widget,
 };

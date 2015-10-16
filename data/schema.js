@@ -31,7 +31,7 @@ import {
 
 import {
   // Import methods that your schema can use to interact with your database
-  User,
+  Message,
   Widget,
   getUser,
   getViewer,
@@ -48,7 +48,7 @@ import {
 var {nodeInterface, nodeField} = nodeDefinitions(
   (globalId) => {
     var {type, id} = fromGlobalId(globalId);
-    if (type === 'User') {
+    if (type === 'Message') {
       return getUser(id);
     } else if (type === 'Widget') {
       return getWidget(id);
@@ -57,8 +57,8 @@ var {nodeInterface, nodeField} = nodeDefinitions(
     }
   },
   (obj) => {
-    if (obj instanceof User) {
-      return userType;
+    if (obj instanceof Message) {
+      return messageType;
     } else if (obj instanceof Widget)  {
       return widgetType;
     } else {
@@ -71,11 +71,11 @@ var {nodeInterface, nodeField} = nodeDefinitions(
  * Define your own types here
  */
 
-var userType = new GraphQLObjectType({
-  name: 'User',
+var messageType = new GraphQLObjectType({
+  name: 'Message',
   description: 'A person who uses our app',
   fields: () => ({
-    id: globalIdField('User'),
+    id: globalIdField('Message'),
     widgets: {
       type: widgetConnection,
       description: 'A person\'s collection of widgets',
@@ -91,9 +91,13 @@ var widgetType = new GraphQLObjectType({
   description: 'A shiny widget',
   fields: () => ({
     id: globalIdField('Widget'),
-    name: {
+    content: {
       type: GraphQLString,
-      description: 'The name of the widget',
+      description: 'The content of the message',
+    },
+    timestamp: {
+    type: GraphQLInt,
+      description: 'The timestamp of the message',
     },
   }),
   interfaces: [nodeInterface],
@@ -115,7 +119,7 @@ var queryType = new GraphQLObjectType({
     node: nodeField,
     // Add your own root fields here
     viewer: {
-      type: userType,
+      type: messageType,
       resolve: () => getViewer()
     }
   })
