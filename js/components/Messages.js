@@ -1,5 +1,6 @@
 import React from 'react';
 import Relay from 'react-relay';
+import Moment from 'moment';
 
 
 export default class Messages extends React.Component {
@@ -9,10 +10,11 @@ export default class Messages extends React.Component {
     }
 
   render() {
-    let widgets = this.props.viewer.widgets;
+    let messages = this.props.viewer.widgets;
+    console.log(Moment);
     return (
         <div className="messages">
-          {widgets.edges.map(edge =>
+          {messages.edges.map(edge =>
             <p key={edge.node.id}>{edge.node.content} (ID: {edge.node.id})
 
                 <span className="time">{edge.node.timestamp}</span>
