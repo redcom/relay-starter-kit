@@ -5,19 +5,22 @@ import Moment from 'moment';
 
 export default class Messages extends React.Component {
 
+
+    componentWillMount() {
+        this.setState({timeFormat: 'lll'});
+    }
+
     click(e) {
         e.target.parentNode.remove();
     }
 
   render() {
-    let messages = this.props.viewer.widgets;
-    console.log(Moment);
+    let messages = this.props.viewer.messages;
     return (
         <div className="messages">
           {messages.edges.map(edge =>
-            <p key={edge.node.id}>{edge.node.content} (ID: {edge.node.id})
-
-                <span className="time">{edge.node.timestamp}</span>
+            <p key={edge.node.id}>{edge.node.content}
+                <span className="time">{ Moment(edge.node.timestamp).format(this.state.timeFormat) }</span>
                 <span className="delete" onClick={this.click.bind(this)}>X</span>
             </p>
           )}

@@ -44,7 +44,7 @@
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "Message",
+                "name": "MessageList",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -94,20 +94,20 @@
           "possibleTypes": [
             {
               "kind": "OBJECT",
-              "name": "Message",
+              "name": "MessageList",
               "ofType": null
             },
             {
               "kind": "OBJECT",
-              "name": "Widget",
+              "name": "Message",
               "ofType": null
             }
           ]
         },
         {
           "kind": "OBJECT",
-          "name": "Message",
-          "description": "A person who uses our app",
+          "name": "MessageList",
+          "description": "A list which contains messages",
           "fields": [
             {
               "name": "id",
@@ -126,8 +126,8 @@
               "deprecationReason": null
             },
             {
-              "name": "widgets",
-              "description": "A person's collection of widgets",
+              "name": "messages",
+              "description": "A collection of messages",
               "args": [
                 {
                   "name": "before",
@@ -172,7 +172,7 @@
               ],
               "type": {
                 "kind": "OBJECT",
-                "name": "WidgetConnection",
+                "name": "MessageConnection",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -212,7 +212,7 @@
         },
         {
           "kind": "OBJECT",
-          "name": "WidgetConnection",
+          "name": "MessageConnection",
           "description": "A connection to a list of items.",
           "fields": [
             {
@@ -240,7 +240,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "WidgetEdge",
+                  "name": "MessageEdge",
                   "ofType": null
                 }
               },
@@ -332,7 +332,7 @@
         },
         {
           "kind": "OBJECT",
-          "name": "WidgetEdge",
+          "name": "MessageEdge",
           "description": "An edge in a connection.",
           "fields": [
             {
@@ -341,7 +341,7 @@
               "args": [],
               "type": {
                 "kind": "OBJECT",
-                "name": "Widget",
+                "name": "Message",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -371,8 +371,8 @@
         },
         {
           "kind": "OBJECT",
-          "name": "Widget",
-          "description": "A shiny widget",
+          "name": "Message",
+          "description": "A singe message",
           "fields": [
             {
               "name": "id",

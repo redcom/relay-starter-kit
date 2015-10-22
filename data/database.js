@@ -8,29 +8,28 @@
  */
 
 // Model types
+class MessageList extends Object {}
 class Message extends Object {}
-class Widget extends Object {}
 
 // Mock data
-var viewer = new Message();
+var viewer = new MessageList();
 viewer.id = '1';
-viewer.content = 'Anonymous';
-viewer.timestamp = Date.now();
+viewer.messages = [];
 
-var widgets = ['What', 'Who', 'How'].map((content, i) => {
-  var widget = new Widget();
-widget.content = content;
-widget.timestamp = Date.now();
-  widget.id = `${i}`;
-  return widget;
+var messages = ['What', 'Who', 'How'].map((content, i) => {
+    var message = new Message();
+    message.content = content;
+    message.timestamp = Date.now();
+    message.id = `${i}`;
+    return message;
 });
 
 module.exports = {
-  // Export methods that your schema can use to interact with your database
-  getUser: (id) => id === viewer.id ? viewer : null,
-  getViewer: () => viewer,
-  getWidget: (id) => widgets.find(w => w.id === id),
-  getWidgets: () => widgets,
-  Message,
-  Widget,
+    // Export methods that your schema can use to interact with your database
+    getMessageList: (id) => id === viewer.id ? viewer : null,
+    getViewer: () => viewer,
+    getiMessage: (id) => messages.find(m => m.id === id),
+    getMessages: () => messages,
+    MessageList,
+    Message,
 };

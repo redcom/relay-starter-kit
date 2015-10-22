@@ -31,12 +31,12 @@ import {
 
 import {
   // Import methods that your schema can use to interact with your database
+  MessageList,
   Message,
-  Widget,
-  getUser,
+  getMessageList,
   getViewer,
-  getWidget,
-  getWidgets,
+  getMessage,
+  getMessages,
 } from './database';
 
 /**
@@ -48,19 +48,19 @@ import {
 var {nodeInterface, nodeField} = nodeDefinitions(
   (globalId) => {
     var {type, id} = fromGlobalId(globalId);
-    if (type === 'Message') {
-      return getUser(id);
-    } else if (type === 'Widget') {
-      return getWidget(id);
+    if (type === 'MessageList') {
+      return getMessageList(id);
+    } else if (type === 'Message') {
+      return getMessage(id);
     } else {
       return null;
     }
   },
   (obj) => {
-    if (obj instanceof Message) {
+    if (obj instanceof MessageList) {
+      return messageListType;
+    } else if (obj instanceof Message)  {
       return messageType;
-    } else if (obj instanceof Widget)  {
-      return widgetType;
     } else {
       return null;
     }
@@ -71,43 +71,44 @@ var {nodeInterface, nodeField} = nodeDefinitions(
  * Define your own types here
  */
 
-var messageType = new GraphQLObjectType({
-  name: 'Message',
-  description: 'A person who uses our app',
+var messageListType = new GraphQLObjectType({
+  name: 'MessageList',
+  description: 'A list which contains messages',
   fields: () => ({
     id: globalIdField('Message'),
-    widgets: {
-      type: widgetConnection,
-      description: 'A person\'s collection of widgets',
+    messages: {
+      type: messageConnection,
+      description: 'A collection of messages',
       args: connectionArgs,
-      resolve: (_, args) => connectionFromArray(getWidgets(), args),
+      resolve: (_, args) => connectionFromArray(getMessages(), args),
     },
   }),
   interfaces: [nodeInterface],
 });
 
-var widgetType = new GraphQLObjectType({
-  name: 'Widget',
-  description: 'A shiny widget',
+var messageType = new GraphQLObjectType({
+  name: 'Message',
+  description: 'A singe message',
   fields: () => ({
-    id: globalIdField('Widget'),
+    id: globalIdField('Message'),
     content: {
-      type: GraphQLString,
-      description: 'The content of the message',
+        type: GraphQLString,
+        description: 'The content of the message',
     },
     timestamp: {
-    type: GraphQLInt,
-      description: 'The timestamp of the message',
+        type: GraphQLInt,
+        description: 'The timestamp of the message',
     },
   }),
   interfaces: [nodeInterface],
 });
 
 /**
- * Define your own connection types here
+* Define your own connection types here
+* A MessageList has many messages
  */
-var {connectionType: widgetConnection} =
-  connectionDefinitions({name: 'Widget', nodeType: widgetType});
+var {connectionType: messageConnection} =
+  connectionDefinitions({name: 'Message', nodeType: messageType});
 
 /**
  * This is the type that will be the root of our query,
@@ -119,7 +120,7 @@ var queryType = new GraphQLObjectType({
     node: nodeField,
     // Add your own root fields here
     viewer: {
-      type: messageType,
+      type: messageListType,
       resolve: () => getViewer()
     }
   })
