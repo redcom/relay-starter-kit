@@ -24,12 +24,28 @@ var messages = ['What', 'Who', 'How'].map((content, i) => {
     return message;
 });
 
+
+// mutations methods
+var addMessage  = (content)  => {
+    var message = new Message();
+
+    message.content = content;
+    message.timestamp = Date.now();
+    message.id = `${messages.length + 1}`;
+
+    messages.push(message);
+    return message.id;
+
+};
+
 module.exports = {
     // Export methods that your schema can use to interact with your database
     getMessageList: (id) => id === viewer.id ? viewer : null,
     getViewer: () => viewer,
     getiMessage: (id) => messages.find(m => m.id === id),
     getMessages: () => messages,
+    addMessage: addMessage,
+
     MessageList,
     Message,
 };

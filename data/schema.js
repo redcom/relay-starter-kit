@@ -8,11 +8,8 @@
  */
 
 import {
-  GraphQLBoolean,
-  GraphQLFloat,
   GraphQLID,
   GraphQLInt,
-  GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
@@ -30,13 +27,18 @@ import {
 } from 'graphql-relay';
 
 import {
-  // Import methods that your schema can use to interact with your database
-  MessageList,
-  Message,
-  getMessageList,
-  getViewer,
-  getMessage,
-  getMessages,
+    /* Import methods that your schema can use to interact with your database */
+
+    MessageList,
+    Message,
+
+    getMessageList,
+    getViewer,
+    getMessage,
+    getMessages,
+
+    addMessage
+
 } from './database';
 
 /**
@@ -130,9 +132,31 @@ var queryType = new GraphQLObjectType({
  * This is the type that will be the root of our mutations,
  * and the entry point into performing writes in our schema.
  */
+
+var AddMessageMutation = mutationWithClientMutationId({
+    name: 'AddMessage',
+    inputFields: {
+        content: { type: new GraphQLNonNull(GraphQLString) },
+        timestamp: { type: GraphQLInt }
+    },
+    outputFields: {
+        message: {
+            type: messageType,
+            resolve: ({localMutationId}) => getMessage(localMutationId)
+        }
+    },
+    mutateAndGetPayload: ({content}) => {
+        var localMutationId = addMessage(content);
+        return {localMutationId};
+    }
+});
+
+
+
 var mutationType = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
+    addMessage: AddMessageMutation
     // Add your own mutations here
   })
 });
@@ -143,6 +167,5 @@ var mutationType = new GraphQLObjectType({
  */
 export var Schema = new GraphQLSchema({
   query: queryType,
-  // Uncomment the following after adding some mutation fields:
-  // mutation: mutationType
+   mutation: mutationType
 });
