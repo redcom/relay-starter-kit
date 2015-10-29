@@ -7,12 +7,12 @@ import Messages from './Messages';
 
 class App extends React.Component {
 
-    _handleAddMessage = (content) => {
-        console.log("Content" , content);
-        Relay.Store.update(
-            new AddMessage({content})
-        );
-    }
+  _handleAddMessage = (message) => {
+    console.log("Content" , message);
+    Relay.Store.update(
+      new AddMessage( message )
+    );
+  }
   render() {
     let viewer = this.props.viewer;
     return (
@@ -20,9 +20,9 @@ class App extends React.Component {
         <h1> Chat list</h1>
         <Messages viewer={viewer} />
         <InputChat
-            onAdd={this._handleAddMessage}
-        />
-      </div>
+          onAdd={this._handleAddMessage}
+          />
+        </div>
     );
   }
 }
@@ -30,17 +30,17 @@ class App extends React.Component {
 export default Relay.createContainer(App, {
   fragments: {
     viewer: () => Relay.QL`
-      fragment on MessageList {
-        messages(first: 10) {
-          edges {
-            node {
-              id,
-              content,
-              timestamp
-            },
+    fragment on MessageList {
+      messages(first: 10) {
+        edges {
+          node {
+            id,
+            content,
+            timestamp
           },
         },
-      }
+      },
+    }
     `,
   },
 });

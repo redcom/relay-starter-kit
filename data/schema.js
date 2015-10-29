@@ -145,8 +145,8 @@ var AddMessageMutation = mutationWithClientMutationId({
             resolve: ({localMutationId}) => getMessage(localMutationId)
         }
     },
-    mutateAndGetPayload: ({content}) => {
-        var localMutationId = addMessage(content);
+    mutateAndGetPayload: ({content, timestamp}) => {
+        var localMutationId = addMessage({content, timestamp});
         return {localMutationId};
     }
 });

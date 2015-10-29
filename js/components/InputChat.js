@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-    var {PropTypes} = React;
+var {PropTypes} = React;
 
 export default class InputChat extends React.Component {
 
@@ -23,20 +23,28 @@ export default class InputChat extends React.Component {
      */
 
     keyPressHandler(e) {
-        if(e.keyCode === 13) {
-            this.setState({value: e.target.value});
-            e.target.value = "";
+        e.preventDefault();
+        if(e.type==="keyup" && e.keyCode === 13) {
+            this.props.onAdd({
+                content: this.state.value,
+                timestamp: Date.now()
+            });
+            this.setState({value: ""});
+            return;
         }
+
+        this.setState({value: e.target.value});
     }
 
     render() {
         return (
-                <input
-                    className="message"
-                    placeholder="Add a jot to yourself and press <Enter>"
+            <input
+                className="message"
+                placeholder="Add a jot to yourself and press <Enter>"
                     onChange={this.keyPressHandler.bind(this)}
+                    onKeyUp={this.keyPressHandler.bind(this)}
                     value={this.state.value}
-                />
+                    />
         );
     }
 }
