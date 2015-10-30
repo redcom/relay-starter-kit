@@ -8,37 +8,38 @@
  */
 
 import {
-  GraphQLID,
-  GraphQLInt,
-  GraphQLNonNull,
-  GraphQLObjectType,
-  GraphQLSchema,
-  GraphQLString,
+    GraphQLID,
+    GraphQLInt,
+    GraphQLNonNull,
+    GraphQLObjectType,
+    GraphQLSchema,
+    GraphQLString,
 } from 'graphql';
 
 import {
-  connectionArgs,
-  connectionDefinitions,
-  connectionFromArray,
-  cursorForObjectInConnection,
-  fromGlobalId,
-  globalIdField,
-  mutationWithClientMutationId,
-  nodeDefinitions,
+    connectionArgs,
+    connectionDefinitions,
+    connectionFromArray,
+    cursorForObjectInConnection,
+    fromGlobalId,
+    globalIdField,
+    mutationWithClientMutationId,
+    nodeDefinitions,
 } from 'graphql-relay';
 
 import {
     /* Import methods that your schema can use to interact with your database */
 
-    MessageList,
-    Message,
+        MessageList,
+        Message,
 
-    getMessageList,
-    getViewer,
-    getMessage,
-    getMessages,
+        getMessageList,
+        getViewer,
+        getMessage,
+        getMessages,
 
-    addMessage
+        addMessage,
+        deleteMessage,
 
 } from './database';
 
@@ -49,25 +50,25 @@ import {
  * The second defines the way we resolve an object to its GraphQL type.
  */
 var {nodeInterface, nodeField} = nodeDefinitions(
-  (globalId) => {
-    var {type, id} = fromGlobalId(globalId);
-    if (type === 'MessageList') {
-      return getMessageList(id);
-    } else if (type === 'Message') {
-      return getMessage(id);
-    } else {
-      return null;
+    (globalId) => {
+        var {type, id} = fromGlobalId(globalId);
+        if (type === 'MessageList') {
+            return getMessageList(id);
+        } else if (type === 'Message') {
+            return getMessage(id);
+        } else {
+            return null;
+        }
+    },
+    (obj) => {
+        if (obj instanceof MessageList) {
+            return messageListType;
+        } else if (obj instanceof Message)  {
+            return messageType;
+        } else {
+            return null;
+        }
     }
-  },
-  (obj) => {
-    if (obj instanceof MessageList) {
-      return messageListType;
-    } else if (obj instanceof Message)  {
-      return messageType;
-    } else {
-      return null;
-    }
-  }
 );
 
 /**
@@ -75,63 +76,63 @@ var {nodeInterface, nodeField} = nodeDefinitions(
  */
 
 var messageListType = new GraphQLObjectType({
-  name: 'MessageList',
-  description: 'A list which contains messages',
-  fields: () => ({
-    id: globalIdField('MessageList'),
-    uid: {
-        type: GraphQLString,
-        description: 'The content of the message',
-    },
-    messages: {
-      type: messageConnection,
-      description: 'A collection of messages',
-      args: connectionArgs,
-      resolve: (_, args) => connectionFromArray(getMessages(), args),
-    },
-  }),
-  interfaces: [nodeInterface],
+    name: 'MessageList',
+    description: 'A list which contains messages',
+    fields: () => ({
+        id: globalIdField('MessageList'),
+        uid: {
+            type: GraphQLString,
+            description: 'The content of the message',
+        },
+        messages: {
+            type: messageConnection,
+            description: 'A collection of messages',
+            args: connectionArgs,
+            resolve: (_, args) => connectionFromArray(getMessages(), args),
+        },
+    }),
+    interfaces: [nodeInterface],
 });
 
 var messageType = new GraphQLObjectType({
-  name: 'Message',
-  description: 'A singe message',
-  fields: () => ({
-    id: globalIdField('Message'),
-    content: {
-        type: GraphQLString,
-        description: 'The content of the message',
-    },
-    timestamp: {
-        type: GraphQLInt,
-        description: 'The timestamp of the message',
-    },
-  }),
-  interfaces: [nodeInterface],
+    name: 'Message',
+    description: 'A singe message',
+    fields: () => ({
+        id: globalIdField('Message'),
+        content: {
+            type: GraphQLString,
+            description: 'The content of the message',
+        },
+        timestamp: {
+            type: GraphQLInt,
+            description: 'The timestamp of the message',
+        },
+    }),
+    interfaces: [nodeInterface],
 });
 
 /**
-* Define your own connection types here
-* A MessageList has many messages
+ * Define your own connection types here
+ * A MessageList has many messages
  */
 var {connectionType: messageConnection,
     edgeType: GraphQLMessageEdge
-    } = connectionDefinitions({name: 'Message', nodeType: messageType});
+} = connectionDefinitions({name: 'Message', nodeType: messageType});
 
 /**
  * This is the type that will be the root of our query,
  * and the entry point into our schema.
  */
 var queryType = new GraphQLObjectType({
-  name: 'Query',
-  fields: () => ({
-    node: nodeField,
-    // Add your own root fields here
-    viewer: {
-      type: messageListType,
-      resolve: () => getViewer()
-    }
-  })
+    name: 'Query',
+    fields: () => ({
+        node: nodeField,
+        // Add your own root fields here
+        viewer: {
+            type: messageListType,
+            resolve: () => getViewer()
+        }
+    })
 });
 
 /**
@@ -147,18 +148,18 @@ var AddMessageMutation = mutationWithClientMutationId({
     },
     outputFields: {
         messageEdge: {
-          type: GraphQLMessageEdge,
+            type: GraphQLMessageEdge,
             resolve: ({localMutationId}) => {
-              var msg = getMessage(localMutationId);
-              return {
-                cursor: cursorForObjectInConnection(getMessages(), msg),
-                node: msg,
-              }
+                var msg = getMessage(localMutationId);
+                return {
+                    cursor: cursorForObjectInConnection(getMessages(), msg),
+                    node: msg,
+                }
             }
         },
         viewer: {
-          type: messageListType,
-          resolve: () => getViewer()
+            type: messageListType,
+            resolve: () => getViewer()
         }
 
     },
@@ -168,14 +169,37 @@ var AddMessageMutation = mutationWithClientMutationId({
     }
 });
 
+// Delete a message from database
+var DeleteMesssageMutation = mutationWithClientMutationId({
+    name: 'DeleteMessage',
+    inputFields: {
+        id:  {
+            type: new GraphQLNonNull(GraphQLID)
+        }
+    },
+    outputFields: {
+        deletedMessage: {
+            type: GraphQLID,
+            resolve: ({id}) => id,
+        },
+        viewer: {
+            type: messageListType,
+            resolve: () => getViewer()
+        }
+    },
+    mutateAndGetPayload: ({id}) => {
+        var  localMutationId = deleteMessage(fromGlobalId(id).id);
+        return {id};
+    }
+});
 
 
 var mutationType = new GraphQLObjectType({
-  name: 'Mutation',
-  fields: () => ({
-    addMessage: AddMessageMutation
-    // Add your own mutations here
-  })
+    name: 'Mutation',
+    fields: () => ({
+        addMessage: AddMessageMutation,
+        deleteMessage: DeleteMesssageMutation,
+    })
 });
 
 /**
@@ -183,6 +207,6 @@ var mutationType = new GraphQLObjectType({
  * type we defined above) and export it.
  */
 export var Schema = new GraphQLSchema({
-  query: queryType,
-   mutation: mutationType
+query: queryType,
+mutation: mutationType
 });

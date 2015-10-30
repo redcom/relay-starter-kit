@@ -2,6 +2,8 @@ import React from 'react';
 import Relay from 'react-relay';
 
 import AddMessage from '../mutations/message/AddMessageMutation';
+import DeleteMessage from '../mutations/message/DeleteMessageMutation';
+
 import InputChat from './InputChat';
 import Messages from './Messages';
 
@@ -12,12 +14,23 @@ class App extends React.Component {
       new AddMessage( {message, viewer: this.props.viewer} )
     );
   }
+
+  _handleDeleteMessage = (id) => {
+  console.log(id);
+    Relay.Store.update(
+      new DeleteMessage( {id, viewer: this.props.viewer} )
+    );
+  }
+
   render() {
     let viewer = this.props.viewer;
     return (
       <div>
         <h1> Chat list</h1>
-        <Messages viewer={viewer} />
+        <Messages
+             viewer={viewer}
+             onDelete={this._handleDeleteMessage}
+         />
         <InputChat
           onAdd={this._handleAddMessage}
           />

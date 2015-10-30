@@ -13,7 +13,7 @@ class Message extends Object {}
 
 // Mock data
 var viewer = new MessageList();
-viewer.id = '1';
+viewer.id = 'MessageList_1';
 viewer.messages = [];
 
 var messages = ['What', 'Who', 'How'].map((content, i) => {
@@ -26,7 +26,7 @@ var messages = ['What', 'Who', 'How'].map((content, i) => {
 viewer.messages = messages;
 
 // mutations methods
-var addMessage  = (msg)  => {
+var addMessage = (msg) => {
     var message = new Message();
 
     message.content = msg.content;
@@ -39,13 +39,21 @@ var addMessage  = (msg)  => {
 
 };
 
+var deleteMessage = (id) => {
+    var deleted = viewer.messages.splice(id, 1);
+    if (viewer.messages.length === 0) { viewer.messages = []; }
+    return id;
+};
+
 module.exports = {
     // Export methods that your schema can use to interact with your database
     getMessageList: (id) => id === viewer.id ? viewer : null,
     getViewer: () => viewer,
     getMessage: (id) => viewer.messages.find(m => m.id === id),
     getMessages: () => viewer.messages,
+
     addMessage: addMessage,
+    deleteMessage: deleteMessage,
 
     MessageList,
     Message,
