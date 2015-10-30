@@ -1,52 +1,55 @@
 /*
    AddMessageMutation add a message to MessageList
 */
+
 import Relay from 'react-relay';
 
 export default class AddMessageMutation extends Relay.Mutation {
-  static fragments = {
-    viewer: () => Relay.QL`
-    fragment on Message {
-      id,
-      content,
-      timestamp,
-    }
-    `,
-  };
+
   getMutation() {
     return Relay.QL`mutation{addMessage}`;
   }
+
   getFatQuery() {
     return Relay.QL`
     fragment on AddMessagePayload {
-      message {
-        content,
-        timestamp,
-      },
+      messageEdge,
+      viewer {
+          id,
+      }
     }
     `;
   }
   getConfigs() {
     return [{
-      type: 'MESSAGE_ADD',
-      fieldIDs: {
-        content: this.props.content,
-        timestamp: this.props.timestamp,
-      },
+      type: 'RANGE_ADD',
+      parentName: 'viewer',
+      parentID: this.props.viewer.id,
+      connectionName: 'messages',
+      edgeName: 'messageEdge',
+      rangeBehaviors: {
+        '': 'append',
+        'orderby(newest)': 'prepend',
+      }
     }];
   }
   getVariables() {
     return {
-      content: this.props.content,
-      timestamp: this.props.timestamp,
+      content: this.props.message.content,
+      timestamp: this.props.message.timestamp,
     };
   }
   getOptimisticResponse() {
     return {
-      message: {
-        content: this.props.content,
-        timestamp: this.props.timestamp,
+      messageEdge: {
+        node: {
+          content: this.props.message.content,
+          timestamp: this.props.message.timestamp,
+        }
       },
-    }
+      viewer: {
+        id: this.props.viewer.id,
+      },
+    };
   }
 }

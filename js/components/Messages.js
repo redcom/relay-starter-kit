@@ -17,8 +17,6 @@ export default class Messages extends React.Component {
   render() {
     let messages = this.props.viewer.messages;
 
-    console.log(this.props.viewer);
-
     return (
         <div className="messages">
           {messages.edges.map(edge =>

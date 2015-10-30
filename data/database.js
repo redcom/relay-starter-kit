@@ -23,7 +23,7 @@ var messages = ['What', 'Who', 'How'].map((content, i) => {
     message.id = `${i}`;
     return message;
 });
-
+viewer.messages = messages;
 
 // mutations methods
 var addMessage  = (msg)  => {
@@ -43,8 +43,8 @@ module.exports = {
     // Export methods that your schema can use to interact with your database
     getMessageList: (id) => id === viewer.id ? viewer : null,
     getViewer: () => viewer,
-    getMessage: (id) => messages.find(m => m.id === id),
-    getMessages: () => messages,
+    getMessage: (id) => viewer.messages.find(m => m.id === id),
+    getMessages: () => viewer.messages,
     addMessage: addMessage,
 
     MessageList,

@@ -20,6 +20,7 @@ import {
   connectionArgs,
   connectionDefinitions,
   connectionFromArray,
+  cursorForObjectInConnection,
   fromGlobalId,
   globalIdField,
   mutationWithClientMutationId,
@@ -77,7 +78,11 @@ var messageListType = new GraphQLObjectType({
   name: 'MessageList',
   description: 'A list which contains messages',
   fields: () => ({
-    id: globalIdField('Message'),
+    id: globalIdField('MessageList'),
+    uid: {
+        type: GraphQLString,
+        description: 'The content of the message',
+    },
     messages: {
       type: messageConnection,
       description: 'A collection of messages',
@@ -109,8 +114,9 @@ var messageType = new GraphQLObjectType({
 * Define your own connection types here
 * A MessageList has many messages
  */
-var {connectionType: messageConnection} =
-  connectionDefinitions({name: 'Message', nodeType: messageType});
+var {connectionType: messageConnection,
+    edgeType: GraphQLMessageEdge
+    } = connectionDefinitions({name: 'Message', nodeType: messageType});
 
 /**
  * This is the type that will be the root of our query,
@@ -140,10 +146,21 @@ var AddMessageMutation = mutationWithClientMutationId({
         timestamp: { type: GraphQLInt }
     },
     outputFields: {
-        message: {
-            type: messageType,
-            resolve: ({localMutationId}) => getMessage(localMutationId)
+        messageEdge: {
+          type: GraphQLMessageEdge,
+            resolve: ({localMutationId}) => {
+              var msg = getMessage(localMutationId);
+              return {
+                cursor: cursorForObjectInConnection(getMessages(), msg),
+                node: msg,
+              }
+            }
+        },
+        viewer: {
+          type: messageListType,
+          resolve: () => getViewer()
         }
+
     },
     mutateAndGetPayload: ({content, timestamp}) => {
         var localMutationId = addMessage({content, timestamp});

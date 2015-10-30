@@ -8,9 +8,8 @@ import Messages from './Messages';
 class App extends React.Component {
 
   _handleAddMessage = (message) => {
-    console.log("Content" , message);
     Relay.Store.update(
-      new AddMessage( message )
+      new AddMessage( {message, viewer: this.props.viewer} )
     );
   }
   render() {
@@ -31,6 +30,7 @@ export default Relay.createContainer(App, {
   fragments: {
     viewer: () => Relay.QL`
     fragment on MessageList {
+      id,
       messages(first: 10) {
         edges {
           node {
