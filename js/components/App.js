@@ -9,51 +9,45 @@ import Messages from './Messages';
 
 class App extends React.Component {
 
-  _handleAddMessage = (message) => {
-    Relay.Store.update(
-      new AddMessage( {message, viewer: this.props.viewer} )
-    );
-  }
+    _handleAddMessage = (message) => {
+        Relay.Store.update(
+            new AddMessage( {message, viewer: this.props.viewer} )
+        );
+    }
 
-  _handleDeleteMessage = (id) => {
-  console.log(id);
-    Relay.Store.update(
-      new DeleteMessage( {id, viewer: this.props.viewer} )
-    );
-  }
+    _handleDeleteMessage = (id) => {
+        Relay.Store.update(
+            new DeleteMessage( {id, viewer: this.props.viewer} )
+        );
+    }
 
-  render() {
-    let viewer = this.props.viewer;
-    return (
-      <div>
-        <h1> Chat list</h1>
-        <Messages
-             viewer={viewer}
-             onDelete={this._handleDeleteMessage}
-         />
-        <InputChat
-          onAdd={this._handleAddMessage}
-          />
-        </div>
-    );
-  }
+    render() {
+        let viewer = this.props.viewer;
+        return (
+            <div>
+                <h1> Chat list</h1>
+                <Messages viewer={viewer} onDelete={this._handleDeleteMessage} />
+                <InputChat onAdd={this._handleAddMessage} />
+            </div>
+        );
+    }
 }
 
 export default Relay.createContainer(App, {
-  fragments: {
-    viewer: () => Relay.QL`
-    fragment on MessageList {
-      id,
-      messages(first: 10) {
-        edges {
-          node {
+    fragments: {
+        viewer: () => Relay.QL`
+        fragment on MessageList {
             id,
-            content,
-            timestamp
-          },
-        },
-      },
-    }
-    `,
-  },
+            messages(first: 10) {
+                edges {
+                    node {
+                        id,
+                        content,
+                        timestamp
+                    },
+                },
+            },
+        }
+        `,
+    },
 });
