@@ -11,7 +11,7 @@ class App extends React.Component {
 
     _handleAddMessage = (message) => {
         Relay.Store.update(
-            new AddMessage( {message, viewer: this.props.viewer} )
+            new AddMessage( {message, viewer: this.props.viewer})
         );
     }
 
@@ -21,15 +21,19 @@ class App extends React.Component {
         );
     }
 
-    render() {
-        let viewer = this.props.viewer;
+    _render = (messages) => {
         return (
             <div>
                 <h1> Chat list</h1>
-                <Messages viewer={viewer} onDelete={this._handleDeleteMessage} />
+                <Messages messages={messages} onDelete={this._handleDeleteMessage} />
                 <InputChat onAdd={this._handleAddMessage} />
             </div>
         );
+    }
+
+    render() {
+        let messages = this.props.viewer.messages;
+        return this._render(messages);
     }
 }
 

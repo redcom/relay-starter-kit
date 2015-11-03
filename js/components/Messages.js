@@ -8,7 +8,8 @@ var {PropTypes} = React;
 export default class Messages extends React.Component {
 
     static propTypes = {
-        onDelete: PropTypes.func.isRequired
+        onDelete: PropTypes.func.isRequired,
+        messages: PropTypes.object.isRequired
     }
 
     componentWillMount() {
@@ -20,7 +21,8 @@ export default class Messages extends React.Component {
     }
 
     _render(messages) {
-        if (messages.length>0) {
+
+        if (messages.edges.length>0) {
             return (
                 <div className="messages">
                     {messages.edges.map(edge =>
@@ -41,8 +43,7 @@ export default class Messages extends React.Component {
     }
 
     render() {
-        let messages = this.props.viewer.messages;
-        console.log(messages.length);
+        let messages = this.props.messages;
         return this._render(messages)
     }
 }

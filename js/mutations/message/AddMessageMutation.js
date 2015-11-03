@@ -43,6 +43,7 @@ export default class AddMessageMutation extends Relay.Mutation {
     return {
       messageEdge: {
         node: {
+          id: this.props.message.id,
           content: this.props.message.content,
           timestamp: this.props.message.timestamp,
         }
